@@ -1,0 +1,104 @@
+<!doctype html> 
+<html>
+	<style>
+	      #map-canvas {
+	        height: 100%;
+	        margin: 0px;
+	        padding: 0px
+	      }
+	</style>
+	<form method="post">
+		Business Name:<br> 
+		<input type="text" id="name" autocomplete="on" required>
+		<br><br>
+		Job Title:<br> 
+		<input type="text" id="title" required> 
+		<br><br>
+		Job Description:<br> 
+		<input type="text" id="description"> 
+		<br><br> 
+		Phone Number: <br> 
+		<input type="tel" id="phone"> 
+		<br><br> 
+		Select image to upload:<br>
+		<input type="file" id='job image'>
+		<br><br> 
+		<input type="submit" onclick="buildURL()">
+		<br><br> 
+		<body>
+			<div id="map-canvas" style="width: 500px; height: 400px;"></div>
+		</body>
+	</form>	
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+
+	<script>
+	var myURL = "https://www.punjit.com/punjit/rest/job/upload?";
+	var latlng = new google.maps.LatLng(37.870052, -122.259678);
+	var geocoder;
+	var mapOptions = {
+		zoom: 15,
+		center: latlng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	function initialize(){
+
+		var input = (document.getElementById("name"));
+		var autocomplete = new google.maps.places.Autocomplete(input);
+		google.maps.event.addListener(autocomplete, 'place_changed', function() {
+			var place = autocomplete.getPlace();
+			map.setCenter(place.geometry.location);
+		});
+	}
+
+	function buildURL(){
+		position = map.getCenter();
+		var nameAddress = nameParse(document.getElementById("name").value.toString());
+		var title = ["jobTitle", document.getElementById("title").value.toString()];
+		var lat = ["latitude", position.lat()];
+		var lng = ["longitutde", position.lng()];
+		var namePhone = ["company", nameAddress[0] + " " + document.getElementById("phone").value.toString()];
+		var description = ["description", document.getElementById("description").value]; 
+		var address= ["fullAddress", nameAddress[1]];
+		var params = [title, lat, lng, namePhone, description, address];
+		var newURL = myURL;
+		for(i = 0; i < params.length; i++){
+			param = makeKVP(params[i]);
+			if(i == 0){
+				newURL = addStart(newURL, param);
+			}
+			else{
+				newURL = addParam(newURL, param);
+			}
+			
+		}
+		console.log(newURL);
+		return newURL;
+	}
+	function makeKVP(params){
+		var key = params[0];
+		var value = params[1];
+		kvp = key+"="+value;
+		return kvp
+	}
+	function addParam(url, param){
+		newURL = url + "&" + param;
+		return newURL;
+	}
+	function addStart(url, param){
+		newURL = url + param;
+		return newURL;
+	}
+
+	function nameParse(string){
+		string.split();
+		var index = string.indexOf(",");
+		var name = string.substring(0, index);
+		var address = string.substring(index + 2);
+		return [name, address];
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+
+	</script>
+		
+</html>
