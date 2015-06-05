@@ -7,7 +7,7 @@
 	        padding: 0px
 	      }
 	</style>
-	<form method="post">
+	<form method="post" action=newURL >
 		Business Name:<br> 
 		<input type="text" id="name" autocomplete="on" required>
 		<br><br>
@@ -21,7 +21,7 @@
 		<input type="tel" id="phone"> 
 		<br><br> 
 		Select image to upload:<br>
-		<input type="file" id='job image'>
+		<input type="file" id='job image' formenctype="multipart/form-data">
 		<br><br> 
 		<input type="submit" onclick="buildURL()">
 		<br><br> 
